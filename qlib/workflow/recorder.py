@@ -3,6 +3,7 @@
 
 import os
 import sys
+import git
 from typing import Optional
 import mlflow
 import shutil
@@ -360,18 +361,35 @@ class MLflowRecorder(Recorder):
         Mlflow only log the commit id of the current repo. But usually, user will have a lot of uncommitted changes.
         So this tries to automatically to log them all.
         """
-        # TODO: the sub-directories maybe git repos.
-        # So it will be better if we can walk the sub-directories and log the uncommitted changes.
-        for cmd, fname in [
-            ("git diff", "code_diff.txt"),
-            ("git status", "code_status.txt"),
-            ("git diff --cached", "code_cached.txt"),
-        ]:
+
+        def is_git_repo(path):
             try:
-                out = subprocess.check_output(cmd, shell=True)
-                self.client.log_text(self.id, out.decode(), fname)  # this behaves same as above
-            except subprocess.CalledProcessError:
-                logger.info(f"Fail to log the uncommitted code of $CWD({os.getcwd()}) when run {cmd}.")
+                _ = git.Repo(path).git_dir
+                return True
+            except git.exc.InvalidGitRepositoryError:
+                return False
+
+        repo_list = set()
+        for (root, dirs, files) in os.walk('.', topdown=True):
+            if is_git_repo(root):
+                repo_list.add(root)
+
+        orig_path = os.getcwd()
+
+        for path in repo_list:
+            os.chdir(path)
+            for cmd, fname in [
+                ("git diff", "code_diff.txt"),
+                ("git status", "code_status.txt"),
+                ("git diff --cached", "code_cached.txt"),
+            ]:
+                try:
+                    out = subprocess.check_output(cmd, shell=True)
+                    self.client.log_text(self.id, out.decode(), fname)  # this behaves same as above
+                except subprocess.CalledProcessError:
+                    logger.info(f"Fail to log the uncommitted code of $CWD({os.getcwd()}) when run {cmd}.")
+
+        os.chdir(orig_path)
 
     def end_run(self, status: str = Recorder.STATUS_S):
         assert status in [
