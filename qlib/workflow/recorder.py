@@ -3,7 +3,6 @@
 
 import os
 import sys
-import git
 from typing import Optional
 import mlflow
 import shutil
@@ -362,12 +361,9 @@ class MLflowRecorder(Recorder):
         So this tries to automatically to log them all.
         """
 
-        def is_git_repo(path):
-            try:
-                _ = git.Repo(path).git_dir
-                return True
-            except git.exc.InvalidGitRepositoryError:
-                return False
+        def is_git_repo(path='.'):
+            return subprocess.call(['git', '-C', path, 'status'], stderr=subprocess.STDOUT,
+                                   stdout=open(os.devnull, 'w')) == 0
 
         repo_list = set()
         for (root, dirs, files) in os.walk('.', topdown=True):
