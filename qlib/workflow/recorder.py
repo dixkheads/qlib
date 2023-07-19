@@ -361,16 +361,12 @@ class MLflowRecorder(Recorder):
         So this tries to automatically to log them all.
         """
 
-        def is_git_repo(path='.'):
-            return subprocess.call(['git', '-C', path, 'status'], stderr=subprocess.STDOUT,
-                                   stdout=open(os.devnull, 'w')) == 0
-
+        orig_path = os.getcwd()
         repo_list = set()
         for (root, dirs, files) in os.walk('.', topdown=True):
-            if is_git_repo(root):
-                repo_list.add(root)
-
-        orig_path = os.getcwd()
+            for dirname in dirs:
+                if dirname == ".git":
+                    repo_list.add(os.sep.join([orig_path, root]))
 
         for path in repo_list:
             os.chdir(path)
