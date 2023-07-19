@@ -362,18 +362,20 @@ class MLflowRecorder(Recorder):
         """
 
         orig_path = os.getcwd()
-        repo_list = set()
+        repo_list = {}
         for (root, dirs, files) in os.walk('.', topdown=True):
             for dirname in dirs:
                 if dirname == ".git":
-                    repo_list.add(os.sep.join([orig_path, root]))
+                    full_path = os.sep.join([orig_path, root])
+                    repo_list[os.path.basename(full_path)] = full_path
 
-        for path in repo_list:
+
+        for reponame, path in repo_list.items():
             os.chdir(path)
             for cmd, fname in [
-                ("git diff", "code_diff.txt"),
-                ("git status", "code_status.txt"),
-                ("git diff --cached", "code_cached.txt"),
+                ("git diff", f"git_stat/{reponame}/code_diff.txt"),
+                ("git status", f"git_stat/{reponame}/code_status.txt"),
+                ("git diff --cached", f"git_stat/{reponame}/code_cached.txt"),
             ]:
                 try:
                     out = subprocess.check_output(cmd, shell=True)
