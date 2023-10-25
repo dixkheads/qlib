@@ -1,7 +1,7 @@
 qlib_init:
     provider_uri: "~/.qlib/qlib_data/us_data"
     region: us
-market: &market all
+market: &market nasdaq100
 benchmark: &benchmark ^dji
 data_handler_config: &data_handler_config
     start_time: 2018-01-01
@@ -37,7 +37,7 @@ port_analysis_config: &port_analysis_config
         module_path: qlib.contrib.strategy
         kwargs:
             signal: <PRED>
-            topk: 50
+            topk: 20
             n_drop: 5
     backtest:
         start_time: 2018-04-01

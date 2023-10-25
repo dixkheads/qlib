@@ -1,11 +1,11 @@
 qlib_init:
     provider_uri: "~/.qlib/qlib_data/us_data"
     region: us
-market: &market all
+market: &market nasdaq100
 benchmark: &benchmark ^dji
 data_handler_config: &data_handler_config
     start_time: 2018-01-01
-    end_time: 2018-05-01
+    end_time: 2020-05-01
     fit_start_time: 2018-01-01
     fit_end_time: 2018-03-25
     instruments: *market
@@ -37,7 +37,7 @@ port_analysis_config: &port_analysis_config
         module_path: qlib.contrib.strategy
         kwargs:
             signal: <PRED>
-            topk: 50
+            topk: 20
             n_drop: 5
     backtest:
         start_time: 2018-04-01
@@ -77,8 +77,8 @@ task:
                 kwargs: *data_handler_config
             segments:
                 train: [2018-01-01, 2018-03-25]
-                valid: [2018-03-26, 2018-03-31]
-                test: [2018-04-01, 2018-04-30]
+                valid: [2018-03-26, 2018-04-30]
+                test: [2018-05-01, 2020-04-30]
             step_len: 20
     record: 
         - class: SignalRecord
