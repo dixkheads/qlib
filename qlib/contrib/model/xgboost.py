@@ -10,6 +10,7 @@ from ...data.dataset import DatasetH
 from ...data.dataset.handler import DataHandlerLP
 from ...model.interpret.base import FeatureInt
 from ...data.dataset.weight import Reweighter
+from ...log import get_module_logger
 
 
 class XGBModel(Model, FeatureInt):
@@ -18,6 +19,7 @@ class XGBModel(Model, FeatureInt):
     def __init__(self, **kwargs):
         self._params = {}
         self._params.update(kwargs)
+        self.logger = get_module_logger("XGBoostModel")
         self.model = None
 
     def fit(
@@ -37,6 +39,8 @@ class XGBModel(Model, FeatureInt):
         )
         x_train, y_train = df_train["feature"], df_train["label"]
         x_valid, y_valid = df_valid["feature"], df_valid["label"]
+
+        x_train.to_csv(fr"C:\Users\gyroc\Desktop\feature_baseline.csv", index=False)
 
         # Lightgbm need 1D array as its label
         if y_train.values.ndim == 2 and y_train.values.shape[1] == 1:
@@ -67,6 +71,15 @@ class XGBModel(Model, FeatureInt):
         )
         evals_result["train"] = list(evals_result["train"].values())[0]
         evals_result["valid"] = list(evals_result["valid"].values())[0]
+        # Get the Pandas Series
+        feature_importance_series = self.get_feature_importance()
+
+        # Specify the file path for the CSV file on your desktop
+        desktop_path = "C:/Users/gyroc/Desktop/"  # Replace 'YourUsername' with your actual username
+        file_path = desktop_path + "FI_baseline.csv"
+
+        # Save the Series to a CSV file on your desktop
+        feature_importance_series.to_csv(file_path, header=True)
 
     def predict(self, dataset: DatasetH, segment: Union[Text, slice] = "test"):
         if self.model is None:

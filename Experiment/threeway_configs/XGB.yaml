@@ -30,8 +30,8 @@ port_analysis_config: &port_analysis_config
             min_cost: 5
 task:
     model:
-        class: XGBModel
-        module_path: qlib.contrib.model.xgboost
+        class: XGBModel_LLM
+        module_path: qlib.contrib.model.xgboost_LLM
         kwargs:
             eval_metric: rmse
             colsample_bytree: 0.8879

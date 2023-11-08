@@ -1,0 +1,62 @@
+Training until validation scores don't improve for 50 rounds
+[20]    train's l2: 1.19633     valid's l2: 0.985627
+[40]    train's l2: 1.14937     valid's l2: 0.983198
+[60]    train's l2: 1.14937     valid's l2: 0.983198
+[80]    train's l2: 1.14937     valid's l2: 0.983198
+Early stopping, best iteration is:
+[35]    train's l2: 1.14993     valid's l2: 0.982639
+[66796:MainThread](2023-10-27 01:04:34,305) INFO - qlib.fill_placeholder - [__in
+it__.py:739] - <PRED> lookes like a placeholder, but it can't match to any given
+ values
+[66796:MainThread](2023-10-27 01:04:34,610) INFO - qlib.workflow - [record_temp.
+py:195] - Signal record 'pred.pkl' has been saved as the artifact of the Experim
+ent 1
+'The following are prediction results of the DEnsembleModel model.'
+                          score
+datetime   instrument
+2018-05-01 AAL        -0.001817
+           AAPL       -0.048407
+           ADBE       -0.074467
+           ADI        -0.082637
+           ADP         0.031468
+{'IC': -0.0006062173847102857,
+ 'ICIR': -0.005438156318497148,
+ 'Rank IC': -0.0037352812297359508,
+ 'Rank ICIR': -0.03397732197141423}
+[66796:MainThread](2023-10-27 01:04:34,664) INFO - qlib.backtest caller - [__ini
+t__.py:93] - Create new exchange
+backtest loop: 100%|██████████████████████████| 22/22 [00:00<00:00, 109.90it/s]
+[66796:MainThread](2023-10-27 01:05:06,497) INFO - qlib.workflow - [record_temp.
+py:504] - Portfolio analysis record 'port_analysis_1day.pkl' has been saved as t
+he artifact of the Experiment 1
+'The following are analysis results of benchmark return(1day).'
+                       risk
+mean               0.000500
+std                0.007571
+annualized_return  0.119081
+information_ratio  1.019553
+max_drawdown      -0.026244
+'The following are analysis results of the excess return without cost(1day).'
+                       risk
+mean               0.001018
+std                0.004250
+annualized_return  0.242200
+information_ratio  3.694047
+max_drawdown      -0.012404
+'The following are analysis results of the excess return with cost(1day).'
+                       risk
+mean               0.000812
+std                0.004233
+annualized_return  0.193306
+information_ratio  2.959929
+max_drawdown      -0.012789
+[66796:MainThread](2023-10-27 01:05:06,506) INFO - qlib.workflow - [record_temp.
+py:529] - Indicator analysis record 'indicator_analysis_1day.pkl' has been saved
+ as the artifact of the Experiment 1
+'The following are analysis results of indicators(1day).'
+     value
+ffr    1.0
+pa     0.0
+pos    0.0
+[66796:MainThread](2023-10-27 01:05:06,523) INFO - qlib.timer - [log.py:127] - T
+ime cost: 0.015s | waiting `async_log` Done

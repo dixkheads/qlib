@@ -1,0 +1,77 @@
+[0]     train-rmse:0.99165      valid-rmse:0.99581
+[20]    train-rmse:0.92460      valid-rmse:0.99486
+[40]    train-rmse:0.85902      valid-rmse:0.99545
+[60]    train-rmse:0.79819      valid-rmse:1.00241
+[77]    train-rmse:0.74825      valid-rmse:1.00108
+[57576:MainThread](2023-10-27 01:08:46,968) INFO - qlib.fill_placeholder - [__in
+it__.py:739] - <PRED> lookes like a placeholder, but it can't match to any given
+ values
+[57576:MainThread](2023-10-27 01:08:47,167) INFO - qlib.workflow - [record_temp.
+py:195] - Signal record 'pred.pkl' has been saved as the artifact of the Experim
+ent 1
+'The following are prediction results of the XGBModel model.'
+                          score
+datetime   instrument
+2018-05-01 AAL        -0.150784
+           AAPL       -0.285568
+           ADBE       -0.061340
+           ADI        -0.198855
+           ADP         0.124690
+{'IC': 0.026019026334736194,
+ 'ICIR': 0.17804214264612214,
+ 'Rank IC': 0.019382244014056787,
+ 'Rank ICIR': 0.19753241971988492}
+[57576:MainThread](2023-10-27 01:08:47,228) INFO - qlib.backtest caller - [__ini
+t__.py:93] - Create new exchange
+[57576:MainThread](2023-10-27 01:09:04,346) WARNING - qlib.online operator - [ex
+change.py:219] - $close field data contains nan.
+[57576:MainThread](2023-10-27 01:09:04,346) WARNING - qlib.online operator - [ex
+change.py:219] - $close field data contains nan.
+[57576:MainThread](2023-10-27 01:09:05,616) WARNING - qlib.data - [data.py:666]
+- load calendar error: freq=day, future=True; return current calendar!
+[57576:MainThread](2023-10-27 01:09:05,617) WARNING - qlib.data - [data.py:669]
+- You can get future calendar by referring to the following document: https://gi
+thub.com/microsoft/qlib/blob/main/scripts/data_collector/contrib/README.md
+[57576:MainThread](2023-10-27 01:09:05,632) WARNING - qlib.BaseExecutor - [execu
+tor.py:121] - `common_infra` is not set for <qlib.backtest.executor.SimulatorExe
+cutor object at 0x000002031F303D90>
+backtest loop:   0%|                                    | 0/22 [00:00<?, ?it/s]C
+:\Users\gyroc\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2
+kfra8p0\LocalCache\local-packages\Python310\site-packages\qlib\utils\index_data.
+py:481: RuntimeWarning: Mean of empty slice
+  return np.nanmean(self.data)
+backtest loop: 100%|██████████████████████████| 22/22 [00:00<00:00, 161.62it/s]
+[57576:MainThread](2023-10-27 01:09:05,797) INFO - qlib.workflow - [record_temp.
+py:504] - Portfolio analysis record 'port_analysis_1day.pkl' has been saved as t
+he artifact of the Experiment 1
+'The following are analysis results of benchmark return(1day).'
+                       risk
+mean               0.000500
+std                0.007571
+annualized_return  0.119081
+information_ratio  1.019553
+max_drawdown      -0.026244
+'The following are analysis results of the excess return without cost(1day).'
+                       risk
+mean               0.000948
+std                0.005714
+annualized_return  0.225554
+information_ratio  2.558895
+max_drawdown      -0.014250
+'The following are analysis results of the excess return with cost(1day).'
+                       risk
+mean               0.000475
+std                0.005721
+annualized_return  0.113169
+information_ratio  1.282187
+max_drawdown      -0.016413
+[57576:MainThread](2023-10-27 01:09:05,807) INFO - qlib.workflow - [record_temp.
+py:529] - Indicator analysis record 'indicator_analysis_1day.pkl' has been saved
+ as the artifact of the Experiment 1
+'The following are analysis results of indicators(1day).'
+     value
+ffr    1.0
+pa     0.0
+pos    0.0
+[57576:MainThread](2023-10-27 01:09:05,824) INFO - qlib.timer - [log.py:127] - T
+ime cost: 0.014s | waiting `async_log` Done
