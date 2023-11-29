@@ -7,7 +7,7 @@ data_handler_config: &data_handler_config
     start_time: 2018-01-01
     end_time: 2018-05-31
     fit_start_time: 2018-01-01
-    fit_end_time: 2018-04-25
+    fit_end_time: 2018-03-25
     instruments: *market
     infer_processors: [
         {
@@ -78,7 +78,7 @@ task:
                 module_path: qlib.contrib.data.handler
                 kwargs: *data_handler_config
             segments:
-              train: [ 2018-01-01, 2018-04-25 ]
+              train: [ 2018-01-01, 2018-03-25 ]
               valid: [ 2018-04-26, 2018-04-30 ]
               test: [ 2018-05-01, 2018-05-31 ]
     record: 

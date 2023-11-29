@@ -1,7 +1,7 @@
 qlib_init:
     provider_uri: "~/.qlib/qlib_data/us_data"
     region: us
-market: &market top20
+market: &market nasdaq100
 benchmark: &benchmark ^dji
 data_handler_config: &data_handler_config
     start_time: 2018-01-01
@@ -53,7 +53,7 @@ task:
                 - 1
                 - 1
                 - 1
-            epochs: 1000
+            epochs: 20
             early_stopping_rounds: 50
             colsample_bytree: 0.8879
             learning_rate: 0.2
