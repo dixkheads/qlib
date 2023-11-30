@@ -37,7 +37,7 @@ else:
 df = pd.read_csv('Data/Daily/Summary_combined.csv')
 
 # Read the GPT-3.5 Turbo prompt from the file
-with open('Data/Daily/Prompt0shot.txt', 'r') as prompt_file:
+with open('Data/Daily/Prompt_0shot.txt', 'r') as prompt_file:
     gpt_prompt_template = prompt_file.read()
 
 # Ensure that the prompt is not empty
@@ -130,7 +130,7 @@ def call_gpt3_and_store_response(stock, summary, impact, keywords, date, uuid_in
     # Call GPT-3 Chat
     try:
         response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo-1106",
+            model="gpt-4",
             messages=[
                 {"role": "system", "content": "You are an experienced equity analyst at SIG focusing on technology market."},
                 {"role": "user", "content": prompt}
