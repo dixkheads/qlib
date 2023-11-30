@@ -1,0 +1,19 @@
+{csum}. I am providing summaries, impact, and keywords of some news related to {stock} today. Based on the news and consider various aspects related to {stock} such as competition, R&D, product, market environment, etc., predict the stock price change today, tomorrow, and over the next week, evaluate the current market, and respond in the following json format. DO NOT RESPOND ANYTHING OTHER THAN JSON.
+{{
+    "Today": "Predict how {stock}'s stock price would change today. Pick one from: significant decrease, decrease, slight decrease, slight increase, increase, significant increase",
+    "Today_reasoning": "Your reasoning for why you predict the price change today in two sentences",
+    "Tomorrow": "Predict how {stock}'s stock price would change tomorrow. Pick one from: significant decrease, decrease, slight decrease, slight increase, increase, significant increase",
+    "Tomorrow_reasoning": "Your reasoning for why you predict the price change tomorrow in two sentences",
+    "Next_week": "Predict how {stock}'s stock price would change next week. Pick one from: significant decrease, decrease, slight decrease, slight increase, increase, significant increase",
+    "Next_week_reasoning": "Your reasoning for why you predict the price change next week in two sentences",
+    "Overall_confidence": "Is the market now generally confident across all sectors? Pick one from: very not, not, not sure, yes, very yes",
+    "Tech_confidence": "Is the market now generally confident in the technology sector? Pick one from: very not, not, not sure, yes, very yes",
+    "Regulations": "Is the regulations or external environment positively impacting the technology sector, especially for {stock}? Pick one from: very not, not, not sure, yes, very yes"
+}}
+The news are as following:
+Summaries:
+{summary}
+Impact:
+{Impact}
+Keywords:
+{Keywords}

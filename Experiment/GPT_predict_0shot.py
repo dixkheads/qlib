@@ -34,13 +34,17 @@ else:
     print("No OpenAI API keys found in the configuration file.")
 
 # Read the combined_data_top3.csv file
-df = pd.read_csv('combined_data_top3.csv')
+df = pd.read_csv('Data/Daily/Summary_combined.csv')
 
-gpt_prompt_template = '{csum}. Given the random texts that may relate to {stock} scrapped from web that may be ' \
-                      'related to {stock} on a certain date, respond in the following json format. REMEMBER THERE SHOULD BE COMMAS BETWEEN FIELDS AND DO NOT respond ' \
-                      'anything other than json:{{"Summary": "Summarize the text in regards to {stock} in two sentences",' \
-                      '"Impact": "Explain how part(s) of the text may directly/indirectly impacting/relevant to {stock} in two sentences. If there is no direct impact consider indirect impact such as technology industry in general or the rivals of {stock}",' \
-                      '"Keywords": [10 Keywords of the news in regards to {stock}]}}\nThe news is as follows: \n{text}'
+# Read the GPT-3.5 Turbo prompt from the file
+with open('Data/Daily/Prompt0shot.txt', 'r') as prompt_file:
+    gpt_prompt_template = prompt_file.read()
+
+# Ensure that the prompt is not empty
+if not gpt_prompt_template:
+    print("Error: The GPT prompt is empty.")
+    # Handle the error as needed
+
 
 
 max_retries = 10
@@ -115,12 +119,12 @@ def get_latest_json_date():
     date_str = latest_json_file.split('_')[0]
     return datetime.datetime.strptime(date_str, '%Y-%m-%d').date()
 # Function to call GPT-3.5 Turbo and store the response to a JSON file
-def call_gpt3_and_store_response(stock, text, date, uuid_in=uuid.uuid4(), retry_count=0):
+def call_gpt3_and_store_response(stock, summary, impact, keywords, date, uuid_in, retry_count=0):
     if retry_count >= max_retries:
         print(f"Max retries reached. Skipping entry: {date} - {stock}")
         return
 
-    prompt = gpt_prompt_template.format(stock=stock, text=text, csum=company_summary[stock])
+    prompt = gpt_prompt_template.format(stock=stock, csum=company_summary[stock], summary=summary, impact=impact, keywords=keywords)
     print(prompt)
 
     # Call GPT-3 Chat
@@ -153,16 +157,22 @@ def call_gpt3_and_store_response(stock, text, date, uuid_in=uuid.uuid4(), retry_
 
             # Extract relevant information from the decoded JSON response
             gpt_response = {
-                "Summary": response_content.get("Summary", ""),
-                "Impact": response_content.get("Impact", ""),
-                "Keywords": response_content.get("Keywords", []),
+                "Today": response_content.get("Today", ""),
+                "Today_reasoning": response_content.get("Today_reasoning", ""),
+                "Tomorrow": response_content.get("Tomorrow", ""),
+                "Tomorrow_reasoning": response_content.get("Tomorrow_reasoning", ""),
+                "Next_week": response_content.get("Next_week", ""),
+                "Next_week_reasoning": response_content.get("Next_week_reasoning", ""),
+                "Overall_confidence": response_content.get("Overall_confidence", ""),
+                "Tech_confidence": response_content.get("Tech_confidence", ""),
+                "Regulations": response_content.get("Regulations", ""),
                 "date": date,
                 "stock": stock
             }
 
             print(gpt_response)
             # Save the response to a JSON file
-            date_folder = os.path.join("Data/Summary", date)
+            date_folder = os.path.join("Data/Daily/zero_shot", date)
 
             # Check if the folder for the date already exists
             if not os.path.exists(date_folder):
@@ -183,83 +193,40 @@ def call_gpt3_and_store_response(stock, text, date, uuid_in=uuid.uuid4(), retry_
             print(f'The output is: {response["choices"][0]["message"]["content"]}')
 
             # If there's an error, store the response in a text file
-            error_filename = f"Data/Summary/Error/{date}_{uuid_in}.txt"
+            error_filename = f"Data/Daily/Error/{date}_{uuid_in}.txt"
             with open(error_filename, 'w') as error_file:
                 error_file.write(response["choices"][0]["message"]["content"])
             time.sleep(5)  # Wait for 5 seconds before retrying
-            call_gpt3_and_store_response(stock, text, date, uuid_in=uuid_in, retry_count=retry_count + 2)
+            call_gpt3_and_store_response(stock, summary, impact, keywords, date, uuid_in, retry_count=retry_count + 2)
 
     except openai.error.OpenAIError as e:
         print(f"Error calling GPT-3 Chat: {e}")
 
-        if openai.api_key == key_set[0]:
-            openai.api_key = key_set[1]
+        if openai.api_key == openai_api_keys[0]:
+            openai.api_key = openai_api_keys[1]
         else:
-            openai.api_key = key_set[0]
+            openai.api_key = openai_api_keys[0]
 
         # If there's an error, you may want to retry after waiting for a short period
         print(f"Retrying after a brief wait{retry_count}...")
         time.sleep(5)  # Wait for 5 seconds before retrying
-        call_gpt3_and_store_response(stock, text, date, uuid_in=uuid_in, retry_count=retry_count + 1)
+        call_gpt3_and_store_response(stock, summary, impact, keywords, date, uuid_in, retry_count=retry_count + 1)
 
 nltk.download('punkt')
 # Get the date from the latest stored JSON file
-last_stored_date = get_latest_json_date()
 
-# Calculate the next date to start the calling loop
-start_date = last_stored_date + datetime.timedelta(days=1) if last_stored_date else datetime.date.today()
+# Iterate through the DataFrame and call GPT function
+for index, row in df.iterrows():
+    stock = row['Stock']
+    summary = row['Summary']
+    impact = row['Impact']
+    keywords = row['Keywords']
+    date = row['Date']
+    uuid_in = row['uuid']
 
-# Define the path for the CSV file
-segments_csv_path = "Data/Segment_10000.csv"
-
-# Check if the CSV file already exists
-if os.path.exists(segments_csv_path):
-    # If the CSV file exists, read the segments from it
-    df_segments = pd.read_csv(segments_csv_path)
-
-    # # Filter segments based on the start_date
-    # df_segments = df_segments[df_segments['date'] >= start_date]
-
-    # Iterate over the filtered segments and call GPT-3.5 Turbo
-    for index, row in tqdm(df_segments.iterrows(), total=len(df_segments), desc="Processing Segments"):
-        stock = row['stock']
-        segment_text = row['segment']
-        date = row['date']
-        uuid = row['uuid']
-
-        # Check if the UUID is already in progress
-        if not is_uuid_in_progress(uuid):
-            call_gpt3_and_store_response(stock, segment_text, date, uuid_in=uuid)
-        else:
-            print(f"Skipping {uuid} as it is already in progress.")
-
-else:
-    # If the CSV file doesn't exist, create it
-    segments_data = []
-
-    for index, row in tqdm(df.iterrows(), total=len(df), desc="Storing Segments"):
-        stock = row['stock']
-        text = row['text']
-        date = row['date']
-
-        # Check if the entry's date is after the start date
-        entry_date = datetime.datetime.strptime(date, '%Y-%m-%d').date()
-        if entry_date >= start_date:
-            # Tokenize the text using NLTK
-            tokens = nltk.word_tokenize(text)
-
-            # Segment the tokens into segments of 10,000 tokens or less
-            segment_size = 7000
-            segments = [tokens[i:i + segment_size] for i in range(0, len(tokens), segment_size)]
-
-            # Store each segment in the list
-            for segment in segments:
-                segment_text = ' '.join(segment)
-                segments_data.append({'stock': stock, 'date': date, 'segment': segment_text, 'uuid': str(uuid.uuid4())})
-
-    # Create a DataFrame from the segments_data list
-    df_segments = pd.DataFrame(segments_data)
-
-    # Save the DataFrame to the CSV file
-    df_segments.to_csv(segments_csv_path, index=False)
-
+    # Check if the UUID is not in progress
+    if not is_uuid_in_progress(uuid_in):
+        # Call the GPT function
+        call_gpt3_and_store_response(stock, summary, impact, keywords, date, uuid_in)
+    else:
+        print(f"UUID {uuid_in} is already in progress. Skipping...")
